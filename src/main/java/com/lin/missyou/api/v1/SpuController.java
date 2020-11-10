@@ -1,13 +1,10 @@
 package com.lin.missyou.api.v1;
 
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
 import com.lin.missyou.bo.PageCounter;
 import com.lin.missyou.exception.http.NotFoundException;
 import com.lin.missyou.model.Spu;
 import com.lin.missyou.service.SpuService;
 import com.lin.missyou.util.CommonUtil;
-import com.lin.missyou.vo.Paging;
 import com.lin.missyou.vo.PagingDozer;
 import com.lin.missyou.vo.SpuSimplifyVO;
 import org.springframework.beans.BeanUtils;
@@ -46,10 +43,21 @@ public class SpuController {
     }
 
     @GetMapping("/latest")
-    public PagingDozer getLatestSpuList(@RequestParam(defaultValue = "0") Integer start, @RequestParam(defaultValue = "10") Integer count) {
+    public PagingDozer<Spu, SpuSimplifyVO> getLatestSpuList(@RequestParam(defaultValue = "0") Integer start, @RequestParam(defaultValue = "10") Integer count) {
         PageCounter pageCounter = CommonUtil.convertToPageParameter(start, count);
         Page<Spu> page = spuService.getLatestPagingSpu(pageCounter.getPage(), pageCounter.getCount());
 
         return new PagingDozer<Spu, SpuSimplifyVO>(page, SpuSimplifyVO.class);
+    }
+
+    @GetMapping("/by/category/{id}")
+    public PagingDozer<Spu, SpuSimplifyVO> getByCategoryId(@PathVariable @Positive(message = "{id.positive}") Long id,
+                                                           @RequestParam(name = "is_root", defaultValue = "false") Boolean isRoot,
+                                                           @RequestParam(defaultValue = "0") Integer start,
+                                                           @RequestParam(defaultValue = "10") Integer count) {
+        PageCounter pageCounter = CommonUtil.convertToPageParameter(start, count);
+        Page<Spu> spuPage = spuService.getByCategory(id, isRoot, pageCounter.getPage(), pageCounter.getCount());
+
+        return new PagingDozer<>(spuPage, SpuSimplifyVO.class);
     }
 }

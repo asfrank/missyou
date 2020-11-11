@@ -1,5 +1,6 @@
 package com.lin.missyou.model;
 
+import com.lin.missyou.util.ListAndJson;
 import com.lin.missyou.util.MapAndJson;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -23,10 +25,11 @@ public class Sku extends BaseEntity {
     private String title;
     private Long spuId;
 
-    @Convert(converter = MapAndJson.class)
-    private Map<String, Object> test;  // 测试单体json用
+//    @Convert(converter = MapAndJson.class)
+//    private Map<String, Object> test;  // 测试单体json用
 
-    private String specs; // 规格 json字段
+    @Convert(converter = ListAndJson.class)
+    private List<Object> specs; // 规格 json字段
 
     private String code; // 前端使用，按规则拼接
     private Long stock;
